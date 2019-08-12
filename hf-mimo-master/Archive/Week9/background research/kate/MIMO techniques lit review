@@ -1,0 +1,96 @@
+Generally super useful overview: [6]
+
+MIMO techniques outside of HF (... that we’re not using)
+Transmission encoding schemes
+OFDM (Orthogonal frequency-division multiplexing)
+Transmits on multiple different subcarrier frequencies within the whole bandwidth
+orthogonal/independent for each symbol
+Can make ISI arbitrarily small
+Sources: [1], [2]
+OSTBC (Orthogonal Space-Time Block Coding), generalization of Alamouti scheme
+Space-time diversity encoding
+Does not require channel state information at the transmitter
+Sources: [3], [4] (original paper proposing Alamouti scheme)
+Receiver Schemes
+ML (Maximum Likelihood) Detectors
+Minimizes the probability of an incorrect bit, INCREDIBLY time-intensive, examined in our paper
+Sphere decoding
+Variably faster, slightly worse ML
+Trade off accuracy for speed
+Example of SD + deep learning: [5]
+Linear Equalizers
+ZF
+MMSE
+Successive cancellation (SUC) receivers
+Pick a symbol at random and say it’s the right symbol. Remove its propagation from the rest of the received data. 
+Noted problem: if your first guess is wrong everything gets very wrong
+Sources: [6] (mentioned, not really examined)
+Ordered Successive Cancellation Receivers (OSUC)
+Better version of SUC, picks the best stream instead of a random one
+Sources: [6] (mentioned, not really examined)
+
+Resources
+[1] Contemporary Communication Systems (textbook, I assume you already have this reference)
+
+[2] @INPROCEEDINGS{4772401, 
+author={W. {Kabir}}, 
+booktitle={2008 China-Japan Joint Microwave Conference}, 
+title={Orthogonal Frequency Division Multiplexing (OFDM)}, 
+year={2008}, 
+volume={}, 
+number={}, 
+pages={178-184}, 
+keywords={differential phase shift keying;error statistics;multipath channels;Nakagami channels;OFDM modulation;quadrature phase shift keying;Rayleigh channels;reliability;orthogonal frequency division multiplexing;OFDM;multipath reflections;differential coding;differential detection;DQPSK;subcarrier modulation;bit error rate;BER;Nakagmai-Rice fading channels;Rayleigh fading channels;Bit error rate;Fading;Equations;Rayleigh scattering;Power system reliability;Reflection;Frequency domain analysis;Modulation coding;OFDM modulation;Computer simulation;BER;DQPSK;OFDM;PAPR;ADSL;CDMA;BPSK;QAM}, 
+doi={10.1109/CJMW.2008.4772401}, 
+ISSN={2165-4727}, 
+month={Sep.},}
+
+
+[3] @article{article,
+author = {Yılmaz, Ahmet and Kucur, Oğuz},
+year = {2014},
+month = {01},
+pages = {59–63},
+title = {Performance analysis of modulation diversity with OSTBC transmission over Nakagami-m fading channels},
+volume = {68},
+journal = {AEU - International Journal of Electronics and Communications},
+doi = {10.1016/j.aeue.2013.08.002}
+}
+
+
+[4] @ARTICLE{730453, 
+author={S. M. {Alamouti}}, 
+journal={IEEE Journal on Selected Areas in Communications}, 
+title={A simple transmit diversity technique for wireless communications}, 
+year={1998}, 
+volume={16}, 
+number={8}, 
+pages={1451-1458}, 
+keywords={cellular radio;diversity reception;transmitting antennas;receiving antennas;computational complexity;antenna arrays;receive antenna;wireless communications;two-branch transmit diversity;transmit antennas;diversity order;maximal-ratio receiver combining;computation complexity;cellular communications;Wireless communication;Diversity reception;Transmitters;Receiving antennas;Fading;Transmitting antennas;Bandwidth;Base stations;AWGN;Bit error rate}, 
+doi={10.1109/49.730453}, 
+ISSN={0733-8716}, 
+month={Oct},}
+
+[5] @article{article,
+author = {Mohammadkarimi, Mostafa and Mehrabi, Mehrtash and Ardakani, Masoud and Jing, Yindi},
+year = {2019},
+month = {06},
+pages = {1-1},
+title = {Deep Learning Based Sphere Decoding},
+volume = {PP},
+journal = {IEEE Transactions on Wireless Communications},
+doi = {10.1109/TWC.2019.2924220}
+}
+
+[6] @ARTICLE{1266912, 
+author={A. J. {PAULRAJ} and D. A. {GORE} and R. U. {NABAR} and H. {BOLCSKEI}}, 
+journal={Proceedings of the IEEE}, 
+title={An overview of MIMO communications - a key to gigabit wireless}, 
+year={2004}, 
+volume={92}, 
+number={2}, 
+pages={198-218}, 
+keywords={MIMO systems;radio links;radio networks;wireless LAN;indoor radio;fading channels;transceivers;OFDM modulation;quality of service;reviews;MIMO communications;gigabit wireless;wireless local area networks;home audio/visual networks;very high speed wireless links;quality-of-service;nonline-of-sight environments;NLOS environments;bandwidth;spectral efficiency;multiple antennas;multiple-input multiple-output wireless;channel models;performance limits;coding;transceiver design;orthogonal frequency division multiplexing;MIMO;Antenna measurements;Wireless communication;Wireless LAN;Quality of service;Design engineering;Fading;Bit rate;Costs;Receiving antennas}, 
+doi={10.1109/JPROC.2003.821915}, 
+ISSN={0018-9219}, 
+month={Feb},}

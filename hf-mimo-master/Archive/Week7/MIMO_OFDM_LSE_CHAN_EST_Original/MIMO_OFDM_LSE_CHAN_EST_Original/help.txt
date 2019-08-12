@@ -1,0 +1,38 @@
+%% Help
+    % In this code we consider the least square error channel estimation for a
+    % MIMO OFDM system. The user have access to the design parameters of
+    % the MIMO OFDM system and the channel state information. The L-tap
+    % Rayleigh fading channel is considered between any pair of the transmit and
+    % receive antenna. The mean squared error of the LSE channel obtained
+    % by the simulation result is compared with theory. 
+    %
+    % source paper     : "Optimal Training Design for MIMO OFDM Systems in Mobile Wireless Channels"
+    %
+    % Author           : Hamid Ramezani    
+    % Author's contact : http://ens.ewi.tudelft.nl/~ramezani/
+    % Matlab Vession   : 7.13.0.564 (R2011b)
+    %
+    %======================================================================
+    %                               Inputs
+    %======================================================================
+    % Input parameters are (if not set the defalt value will be set)
+        % ofdm.Nb      = 1e2;                 % number of blocks
+        % ofdm.Nt      = 2;                   % number of transmit antennas    
+        % ofdm.Nr      = 4;                   % number of receive antennas
+        % ofdm.K       = 128;                 % number of subcarriers    
+        % ofdm.G       = 1/4;                 % Guard interval percentage    
+        % ofdm.Mod     = 4;                   % QPSK Modulation
+        % ofdm.PSpace  = 1;                   % subcarrier space between two pilots
+    % channel parameters
+        % chan.SNR_dB  = 15;                  % signal to noise ratio
+        % chan.L       = 6;                   % number of taps in each transmit-receive antenna
+    % control parameters
+        % ofdm.ifDemodulateData = 1;          % (1,0) if 1, the code demodulates the transmitted via LS data and calculates the BER
+        % ofdm.ifDisplayResults = 1;          % (1,0) if 1, display the results in the command window
+    %======================================================================
+    %                               Outputs
+    %======================================================================
+    % The main outputs are listed below
+        % chan.MSE_Theory           % Minimum squared error of LSE channel estimation in theory
+        % chan.MSE_Simulation       % Minimum squared error of LSE channel estimation in simulations
+        % ofdm.BER                  % Bit Error Rate if ofdm.ifDemodulateData = 1

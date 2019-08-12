@@ -1,0 +1,26 @@
+Notes from: "An Overview of MIMO Communications—A Key to Gigabit Wireless"
+
+For MIMO, not specifically for HF (i.e. primarily in non-MIMO)
+- Transmit strategies
+    - Space-Time diversity encoding
+        - Alamouti scheme/OSTBC: transmit [s1 s2] followed by [-s2* s1*] from 2 antennas
+            - Extracts channel information from repetition of symbols
+            - Extends beyond 2 Tx via OSTBC
+    - Spatial multiplexing
+        - Horizontal Encoding
+            - each Tx antenna has a totally different data stream
+        - Vertical Encoding
+            - requires joint encoding/decoding
+- Receiver strategies
+    - ML
+    - Linear Receivers
+        - ZF
+        - MMSE
+    - Successive cancellation (SUC) receivers
+        - Pick a symbol at random and say it’s the right symbol. Remove its propagation from the rest of the received data. 
+        - Noted problem: if your first guess is wrong everything gets very wrong
+    - Ordered Successive Cancellation Receivers
+        - Better version of SUC, picks the best stream instead of a random one
+- OFDM
+    - Good for frequency-selective fading channels
+

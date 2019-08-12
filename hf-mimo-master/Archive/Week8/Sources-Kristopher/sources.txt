@@ -1,0 +1,33 @@
+*Equalizers
+Book:
+	contemporary communication systems using matlab 3rd edition
+		MMSE MLD: page 510 ~ 511
+		DFE: page 292 ~ 307
+	dfepaper
+
+other source pdf:
+	mimo-detection-algorithms
+
+
+
+*Watterson Channel Model
+Matlab link: 
+	https://www.mathworks.com/help/comm/examples/hf-ionospheric-channel-models.html#d117e9045
+Paper pdf: 
+	watterson_model
+	itur watterson paper
+
+
+
+*MIMO Channel Model
+Matlab link:
+	https://www.mathworks.com/help/comm/ref/comm.mimochannel-system-object.html
+paper pdf:
+	Kronecker Model
+	
+
+*Monte Carlo Simulation:
+Book:
+	(Kluwer) Simulation Of Communication Systems (2Nd Ed)
+		Ch7 Monte Carlo Simulation & Generation of Random Numbers page 371~
+	

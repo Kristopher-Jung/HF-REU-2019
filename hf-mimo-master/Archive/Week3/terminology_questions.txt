@@ -1,0 +1,9 @@
+TERMS WE DON'T KNOW/WANT RELATIONSHIPS FOR
+
+
+- What are/is the difference between:
+	- path gain
+	- path loss
+	- channel gain
+	- system gain (is this a synonym for channel gain?)
+	- antenna gain

@@ -1,0 +1,9 @@
+clc;
+clear;
+for snr = 1:100
+    [E,P,C,EVM] = MIMO_PARAMATIZED_FUNC(snr, 20e6, 4, 2, 1, 4, 30, 8, 'RLS', 5, 0.01, 1, 0.03);
+    e(snr) = mean(E);
+end
+
+figure
+plot(1:30,e, ':', 'LineWidth', 1.5)

@@ -1,0 +1,151 @@
+% Input Params:
+%   snr = signal to noise ratio
+%   samp_rate = sampling rate
+%   nReceive = number of reciving antennas
+%   nTransmit = number of transmitting antennas
+%   signal_power = power of signal from transmitters
+%   PSK_order = order of Modulations (BPSK(2), QPSK(4), ....)
+%   nframes = number of frames
+%   FFT_len_power = FFT length (power of 2, 2^(x), x >= 3)
+%   Algorithm = [LS_ZF, LMS, RLS, CMA]
+%       [H_est, y] = LS_ZF(Rx, Tx)
+%       [H_est, y] = LMS(Rx, Tx, num_taps, step_size, RT)
+%       [H_est, y] = RLS(Rx, Tx, num_taps, RT, FF)
+%       [H_est, y] = CMA(Rx, Tx, num_taps, RT)
+%   num_taps = number of tabs to be used for LMS
+%   step_size = number of steb sizes to be used for LMS
+%   RT = Number of reference tab to be used for equalizers
+%   FF = Forgetting Factor to be used for 
+% Output Measurments:
+%   E: error per each transmitting antennas
+%   P: Average Power Gains at each of Receivers
+%   C: Capacity of the current systems
+%   EVM: Error Vector Magnitutde
+function [E, P, C, EVM] = MIMO_PARAMATIZED_FUNC(...
+    snr, sample_rate, ...
+    nTransmit, n ...
+    signal_power, PSK_order, nframes, FFT_len_power, ...
+    Algorithm, num_taps, step_size, RT, FF)
+
+% Initialize Watterson MIMO Channel.
+mimoChan = comm.MIMOChannel(...
+    'SampleRate',sample_rate,...
+    'FadingDistribution','Rayleigh',...
+    'AveragePathGains',[0 0],...
+    'PathDelays',[0 0.5] * 1e-3,...
+    'DopplerSpectrum',doppler('Gaussian', 0.1/2),...
+    'TransmitCorrelationMatrix', eye(nTransmit), ...
+    'ReceiveCorrelationMatrix', eye(nReceive));
+
+%Initialize AWGN Channel.
+awgn = comm.AWGNChannel(...
+    'EbNo',snr,...
+    'BitsPerSymbol',log2(PSK_order),...
+    'SignalPower', signal_power);
+
+% Create an error rate counter
+errorRate = comm.ErrorRate;
+
+% Initialize EVM
+evm = comm.EVM(...
+    'MaximumEVMOutputPort',true,...
+    'XPercentileEVMOutputPort',true,...
+    'XPercentileValue',90,...
+    'SymbolCountOutputPort',true);
+
+% Apply OFDM modulation to the random symbols
+ofdmMod = comm.OFDMModulator(...
+    'FFTLength',2^FFT_len_power,...
+    'PilotInputPort',true,...
+    'NumTransmitAntennas',nTransmit);
+
+% Initialize OFDM Demodulator
+ofdmDemod = comm.OFDMDemodulator(ofdmMod);
+ofdmDemod.NumReceiveAntennas = nTransmit;
+ofdmModDim = info(ofdmMod);
+numData = ofdmModDim.DataInputSize(1);   % Number of data subcarriers
+numSym = ofdmModDim.DataInputSize(2);    % Number of OFDM symbols
+numTxAnt = ofdmModDim.DataInputSize(3);  % Number of transmit antennas
+
+% Initialize Random Data.
+data = randi([0 PSK_order-1],nframes*numData,numSym,numTxAnt);
+
+% Modulate Data
+modData = pskmod(data(:), PSK_order);
+modData = reshape(modData,nframes*numData,numSym,numTxAnt);
+
+P = 0;
+for k = 1:nframes
+    % Find row indices for kth OFDM frame
+    indData = (k-1)*ofdmModDim.DataInputSize(1)+1:k*numData;
+    
+    % Generate random OFDM pilot symbols
+    pilotData = complex(rand(ofdmModDim.PilotInputSize), ...
+        rand(ofdmModDim.PilotInputSize));
+    
+    % Modulate QPSK symbols using OFDM
+    initial_data = modData(indData,:,:);
+    Tx = ofdmMod(initial_data, pilotData);
+    
+    % Applying MIMO Channel Fading in Watterson Setup
+    Rx = mimoChan(Tx);
+    
+    % Applying AWGN Channel Fading
+    Rx = awgn(Rx);
+    
+    switch Algorithm
+        case 'LS_ZF'
+            [H_est, tx_est] = LS_ZF(Rx, Tx);
+        case 'LMS'
+            [H_est, tx_est] = LMS(Rx, Tx, num_taps, step_size, RT);
+        case 'RLS'
+            [H_est, tx_est] = RLS(Rx, Tx, num_taps, RT, FF);
+        case 'CMA'
+            [H_est, tx_est] = CMA(Rx, Tx, num_taps, RT);
+    end
+    
+    % LS based channel estimation
+    %H_est=pinv(Tx)*Rx;
+    
+    % Zero Forcing based equalizer
+    %tx_est=Rx/H_est;
+   
+    % Demodulate OFDM data
+    receivedOFDMData = ofdmDemod(tx_est);
+    
+    % Calculate EVM
+    [rmsEVM,~,~,~] = evm(initial_data,receivedOFDMData);
+    for i = 1:nTransmit
+        EVM(i) = rmsEVM(:,:,i);
+    end
+    
+    % Demodulate PSK data
+    receivedData = cell(1, nTransmit);
+    for i = 1:nTransmit
+        receivedData{i} = pskdemod(receivedOFDMData(:,i), PSK_order);
+    end
+    
+    % Compute error statistics
+    dataTmp = data(indData,:,:);
+    for i = 1:nTransmit
+        errors = errorRate(dataTmp(:,:,i), receivedData{i});
+        E(i) = errors(1);
+    end
+    
+    % Calculating mean Power of the received signals at each Receiver.
+    for i = 1:nReceive
+        P = P + mean(20*log10(abs(Rx(:,i))));
+    end
+    
+end
+
+% Calculating Capaity.
+N = min(nReceive, nTransmit);
+[~, V, ~] = svd(H_est*H_est');
+C = 0;
+
+for k=1:N
+    lamda(k) = V(k,k);
+    C = C + log2(1+snr*lamda(k)/nTransmit);
+end
+
